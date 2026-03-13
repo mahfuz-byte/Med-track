@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Dr. {{ profile.user.username }} | MedTrack{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <a href="{% url 'dashboard' %}" class="back-link">&larr; Back to Directory</a>
+
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        {% if profile.photo %}
+          <img src="{{ profile.photo.url }}" alt="Dr. {{ profile.user.username }}" />
+        {% else %}
+          <div class="avatar-placeholder large">{{ profile.user.username|first|upper }}</div>
+        {% endif %}
+      </div>
+      <div class="profile-headline">
+        <h1>Dr. {{ profile.user.username }}</h1>
+        <p class="profile-spec-badge">{{ profile.specialization }}</p>
+        <p class="profile-degrees">{{ profile.degrees }}</p>
+      </div>
+    </div>
+
+    <div class="profile-body">
+      <div class="info-section">
+        <h3>Professional Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Workplace</span>
+            <span class="info-value">{{ profile.workplace }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Graduation Year</span>
+            <span class="info-value">{{ profile.graduation_year }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Visiting Hours</span>
+            <span class="info-value">{{ profile.visiting_hours }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Member Since</span>
+            <span class="info-value">{{ profile.created_at|date:"F Y" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3>Contact Information</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value"><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ profile.phone }}</span>
+          </div>
+          <div class="info-item full-width">
+            <span class="info-label">Address</span>
+            <span class="info-value">{{ profile.address }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

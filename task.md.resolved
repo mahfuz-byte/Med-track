@@ -1,0 +1,16 @@
+# Doctor Management System — Django Project
+
+## Tasks
+
+- [/] Write implementation plan and get user approval
+- [ ] Scaffold Django project and apps (`medtrack`, `accounts`, `doctors`, `admin_panel`)
+- [ ] Define models (`DoctorProfile`, extend User)
+- [ ] Create registration forms (Step 1: credentials, Step 2: professional info)
+- [ ] Build registration views (multi-step flow, pending state)
+- [ ] Build login/logout views with pending-state guard
+- [ ] Build admin dashboard (list pending, approve/reject, confirmation email)
+- [ ] Build doctor dashboard (search, filter by specialization/workplace/year)
+- [ ] Build doctor profile detail page
+- [ ] Create templates with polished UI
+- [ ] Configure email backend, static/media files
+- [ ] Verify the system end-to-end in browser

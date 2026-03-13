@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Register — Step 1 | MedTrack{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="step-indicator">
+        <span class="step active">1</span>
+        <span class="step-line"></span>
+        <span class="step">2</span>
+      </div>
+      <h2>Create Your Account</h2>
+      <p class="auth-sub">Choose a username and password to get started</p>
+    </div>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}
+          <span class="field-error">{{ form.username.errors.0 }}</span>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+        {% if form.password.errors %}
+          <span class="field-error">{{ form.password.errors.0 }}</span>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.password_confirm.id_for_label }}">Confirm Password</label>
+        {{ form.password_confirm }}
+        {% if form.password_confirm.errors %}
+          <span class="field-error">{{ form.password_confirm.errors.0 }}</span>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn-primary btn-full">Next &rarr;</button>
+    </form>
+
+    <p class="auth-footer">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

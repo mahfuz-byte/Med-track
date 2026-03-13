@@ -1,0 +1,138 @@
+# Doctor Management System — Implementation Plan
+
+A Django web application where **doctors** register via a two-step form, wait for **admin** approval, and after approval can log in, search other doctors, and view detailed profiles.
+
+---
+
+## Proposed Changes
+
+### 1. Project Scaffold
+
+#### [NEW] `manage.py` — Django management script
+#### [NEW] `medtrack/` — Project-level package
+
+| File | Purpose |
+|------|---------|
+| `settings.py` | DB (SQLite), apps, auth, media/static, email backend |
+| `urls.py` | Root URL conf — includes app URLs |
+| `wsgi.py` / `asgi.py` | Standard entry points |
+
+#### [NEW] `accounts/` — Django app for auth & registration
+
+| File | Purpose |
+|------|---------|
+| `models.py` | `DoctorProfile` model (OneToOne → `User`) |
+| `forms.py` | `Step1Form` (username/password) + `Step2Form` (profile fields) |
+| `views.py` | Multi-step registration, login (with pending guard), logout |
+| `urls.py` | `/register/step1/`, `/register/step2/`, `/login/`, `/logout/` |
+| `decorators.py` | `@verified_required` — blocks pending users |
+
+#### [NEW] `doctors/` — Django app for doctor dashboard & search
+
+| File | Purpose |
+|------|---------|
+| `views.py` | Dashboard with search/filter, doctor profile detail |
+| `urls.py` | `/dashboard/`, `/profile/<id>/` |
+
+#### [NEW] `admin_panel/` — Django app for admin approval workflow
+
+| File | Purpose |
+|------|---------|
+| `views.py` | List pending doctors, approve/reject actions, send email |
+| `urls.py` | `/admin-panel/`, `/admin-panel/approve/<id>/`, `/admin-panel/reject/<id>/` |
+
+#### [NEW] `templates/` — All HTML templates (project-level)
+
+| Template | Purpose |
+|----------|---------|
+| `base.html` | Shared layout, navbar, CSS/JS |
+| `accounts/register_step1.html` | Username & password form |
+| `accounts/register_step2.html` | Professional details form |
+| `accounts/login.html` | Login page |
+| `accounts/pending.html` | "Awaiting approval" message |
+| `doctors/dashboard.html` | Search form + results table |
+| `doctors/profile_detail.html` | Full doctor profile view |
+| `admin_panel/dashboard.html` | Pending requests list with approve/reject buttons |
+
+#### [NEW] `static/css/style.css` — Custom CSS
+
+---
+
+### 2. Models (`accounts/models.py`)
+
+```python
+class DoctorProfile(models.Model):
+    user              = OneToOneField(User)
+    graduation_year   = IntegerField
+    specialization    = CharField
+    workplace         = CharField
+    degrees           = TextField          # comma-separated or free-text
+    email             = EmailField
+    phone             = CharField
+    address           = TextField
+    visiting_hours    = CharField
+    photo             = ImageField(blank=True, null=True)
+    is_verified       = BooleanField(default=False)
+    is_rejected       = BooleanField(default=False)
+    created_at        = DateTimeField(auto_now_add)
+```
+
+---
+
+### 3. Forms (`accounts/forms.py`)
+
+- **Step1Form** — `username`, `password`, `password_confirm` (validates match & uniqueness)
+- **Step2Form** — ModelForm on `DoctorProfile`, excludes `user`, `is_verified`, `is_rejected`
+
+---
+
+### 4. Views
+
+| View | Detail |
+|------|--------|
+| `register_step1` | Creates `User` (inactive), stores `user_id` in session, redirects to step 2 |
+| `register_step2` | Creates `DoctorProfile` linked to the stored user, redirects to pending page |
+| `login_view` | Uses `authenticate()` + checks `is_verified`; if pending, shows a message |
+| `logout_view` | Standard `logout()` + redirect |
+| `admin_dashboard` | `@staff_member_required` — lists `DoctorProfile.objects.filter(is_verified=False, is_rejected=False)` |
+| `approve_doctor` | Sets `is_verified=True`, activates User, sends email via `send_mail()` |
+| `reject_doctor` | Sets `is_rejected=True`, optionally sends rejection email |
+| `doctor_dashboard` | `@login_required` + `@verified_required` — search form + filtered QuerySet |
+| `doctor_profile` | Detail view for a single doctor |
+
+---
+
+### 5. Email
+
+- Use Django's `console` email backend for development (prints to terminal)
+- On approval, `send_mail()` sends a "You've been approved" message to the doctor's registered email
+
+---
+
+### 6. Static & Media
+
+- `MEDIA_ROOT` / `MEDIA_URL` for uploaded photos
+- `STATIC_ROOT` / `STATIC_URL` for CSS/JS
+- `style.css` with clean, modern styling (card layouts, responsive grid, subtle shadows, gradient accents)
+
+---
+
+## Verification Plan
+
+### Automated (browser-based walkthrough)
+
+1. **Start the dev server** — `python manage.py runserver`
+2. **Register a doctor** — Navigate to `/register/step1/`, fill credentials → step 2, fill professional info → redirected to pending page
+3. **Attempt login while pending** — Should see "awaiting approval" message
+4. **Admin approval** — Log in as superuser at `/admin-panel/`, approve the pending doctor
+5. **Doctor login** — Log in as the approved doctor → dashboard loads
+6. **Search** — Use the search filters → results appear
+7. **Profile** — Click a doctor name → full profile page renders
+
+### Manual (for user to test)
+
+After I build the system, I will walk through steps 1–7 above in the browser and provide screenshots of each step so you can verify. You may also test locally by:
+
+1. Running `python manage.py runserver`
+2. Creating a superuser with `python manage.py createsuperuser`
+3. Following the same flow in your own browser

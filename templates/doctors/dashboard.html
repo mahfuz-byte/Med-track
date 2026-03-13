@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Doctor Directory | MedTrack{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h1>Doctor Directory</h1>
+    <p class="page-sub">Search and connect with verified medical professionals</p>
+  </div>
+
+  <!-- Search Form -->
+  <div class="search-card">
+    <form method="get" class="search-form">
+      <div class="search-grid">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" value="{{ name }}" placeholder="Doctor's username" />
+        </div>
+        <div class="form-group">
+          <label>Specialization</label>
+          <input type="text" name="specialization" value="{{ specialization }}" placeholder="e.g. Cardiology" />
+        </div>
+        <div class="form-group">
+          <label>Workplace</label>
+          <input type="text" name="workplace" value="{{ workplace }}" placeholder="Hospital or clinic" />
+        </div>
+        <div class="form-group">
+          <label>Graduation Year</label>
+          <input type="number" name="graduation_year" value="{{ graduation_year }}" placeholder="e.g. 2005" />
+        </div>
+      </div>
+      <div class="search-actions">
+        <button type="submit" class="btn-primary">Search</button>
+        <a href="{% url 'dashboard' %}" class="btn-secondary">Clear</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results -->
+  <div class="results-section">
+    <p class="results-count">{{ profiles.count }} doctor{{ profiles.count|pluralize }} found</p>
+
+    {% if profiles %}
+      <div class="doctors-grid">
+        {% for profile in profiles %}
+          <a href="{% url 'profile_detail' profile.pk %}" class="doctor-card">
+            <div class="doctor-avatar">
+              {% if profile.photo %}
+                <img src="{{ profile.photo.url }}" alt="Dr. {{ profile.user.username }}" />
+              {% else %}
+                <div class="avatar-placeholder">{{ profile.user.username|first|upper }}</div>
+              {% endif %}
+            </div>
+            <div class="doctor-info">
+              <h3>Dr. {{ profile.user.username }}</h3>
+              <p class="doctor-spec">{{ profile.specialization }}</p>
+              <p class="doctor-workplace">&#127973; {{ profile.workplace }}</p>
+              <p class="doctor-hours">&#128336; {{ profile.visiting_hours }}</p>
+            </div>
+            <div class="doctor-badge">{{ profile.graduation_year }}</div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">&#128269;</div>
+        <p>No doctors found matching your search.</p>
+        <a href="{% url 'dashboard' %}" class="btn-secondary">Clear Filters</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
