@@ -9,7 +9,7 @@ __pycache__/
 # Django
 db.sqlite3
 media/
-staticfiles/
+# staticfiles/ is intentionally committed for Vercel (WhiteNoise)
 
 # Virtual environment
 venv/
