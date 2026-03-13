@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Review Application | MedTrack{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header" style="display:flex; align-items:center; gap:1rem;">
+    <a href="{% url 'admin_dashboard' %}" class="btn-secondary">&larr; Back</a>
+    <div>
+      <h1>Application Review</h1>
+      <p class="page-sub">Submitted on {{ profile.created_at|date:"d M Y, H:i" }}</p>
+    </div>
+  </div>
+
+  <div class="review-card">
+
+    <!-- Status banner -->
+    <div class="review-status-bar">
+      {% if profile.is_rejected %}
+        <span class="badge badge-rejected">Rejected</span>
+      {% elif profile.is_verified %}
+        <span class="badge badge-approved">Approved</span>
+      {% else %}
+        <span class="badge badge-pending">Pending Review</span>
+      {% endif %}
+    </div>
+
+    <!-- Photo + header info -->
+    <div class="review-header">
+      <div class="review-photo">
+        {% if profile.photo %}
+          <img src="{{ profile.photo.url }}" alt="Dr. {{ profile.user.username }}" />
+        {% else %}
+          <div class="review-photo-placeholder">&#128100;</div>
+        {% endif %}
+      </div>
+      <div class="review-headline">
+        <h2>Dr. {{ profile.user.username }}</h2>
+        <p class="review-spec">{{ profile.specialization }}</p>
+        <p class="review-workplace">{{ profile.workplace }}</p>
+      </div>
+    </div>
+
+    <!-- All form fields in a grid -->
+    <div class="review-fields">
+
+      <div class="review-section-title">Academic &amp; Professional</div>
+      <div class="review-grid">
+        <div class="review-field">
+          <span class="field-label">Degrees / Qualifications</span>
+          <span class="field-value">{{ profile.degrees }}</span>
+        </div>
+        <div class="review-field">
+          <span class="field-label">Graduation Year</span>
+          <span class="field-value">{{ profile.graduation_year }}</span>
+        </div>
+        <div class="review-field">
+          <span class="field-label">Specialization</span>
+          <span class="field-value">{{ profile.specialization }}</span>
+        </div>
+        <div class="review-field">
+          <span class="field-label">Workplace / Hospital</span>
+          <span class="field-value">{{ profile.workplace }}</span>
+        </div>
+        <div class="review-field">
+          <span class="field-label">Visiting Hours</span>
+          <span class="field-value">{{ profile.visiting_hours }}</span>
+        </div>
+      </div>
+
+      <div class="review-section-title">Contact Information</div>
+      <div class="review-grid">
+        <div class="review-field">
+          <span class="field-label">Email</span>
+          <span class="field-value"><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></span>
+        </div>
+        <div class="review-field">
+          <span class="field-label">Phone</span>
+          <span class="field-value">{{ profile.phone }}</span>
+        </div>
+        <div class="review-field full-width">
+          <span class="field-label">Address / Clinic Location</span>
+          <span class="field-value">{{ profile.address }}</span>
+        </div>
+      </div>
+
+      <div class="review-section-title">Account</div>
+      <div class="review-grid">
+        <div class="review-field">
+          <span class="field-label">Username</span>
+          <span class="field-value">{{ profile.user.username }}</span>
+        </div>
+        <div class="review-field">
+          <span class="field-label">Date Joined</span>
+          <span class="field-value">{{ profile.user.date_joined|date:"d M Y, H:i" }}</span>
+        </div>
+      </div>
+
+    </div><!-- /review-fields -->
+
+    <!-- Action buttons -->
+    {% if not profile.is_verified %}
+      <div class="review-actions">
+        {% if not profile.is_rejected %}
+          <a href="{% url 'approve_doctor' profile.pk %}"
+             class="btn-approve btn-lg"
+             onclick="return confirm('Approve Dr. {{ profile.user.username }}?')">
+            &#10003; Approve Doctor
+          </a>
+          <a href="{% url 'reject_doctor' profile.pk %}"
+             class="btn-reject btn-lg"
+             onclick="return confirm('Reject Dr. {{ profile.user.username }}?')">
+            &#10007; Reject Application
+          </a>
+        {% else %}
+          <a href="{% url 'approve_doctor' profile.pk %}"
+             class="btn-approve btn-lg"
+             onclick="return confirm('Approve Dr. {{ profile.user.username }}?')">
+            &#10003; Approve (Override Rejection)
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div><!-- /review-card -->
+</div>
+{% endblock %}

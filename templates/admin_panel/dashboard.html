@@ -39,6 +39,7 @@
                 <td>{{ profile.email }}</td>
                 <td>{{ profile.created_at|date:"d M Y" }}</td>
                 <td class="action-cell">
+                  <a href="{% url 'review_doctor' profile.pk %}" class="btn-review">Review</a>
                   <a href="{% url 'approve_doctor' profile.pk %}" class="btn-approve" onclick="return confirm('Approve Dr. {{ profile.user.username }}?')">Approve</a>
                   <a href="{% url 'reject_doctor' profile.pk %}" class="btn-reject" onclick="return confirm('Reject Dr. {{ profile.user.username }}?')">Reject</a>
                 </td>
@@ -111,7 +112,8 @@
                 <td><strong>{{ profile.user.username }}</strong></td>
                 <td>{{ profile.specialization }}</td>
                 <td>{{ profile.email }}</td>
-                <td>
+                <td class="action-cell">
+                  <a href="{% url 'review_doctor' profile.pk %}" class="btn-review">Review</a>
                   <a href="{% url 'approve_doctor' profile.pk %}" class="btn-approve" onclick="return confirm('Approve Dr. {{ profile.user.username }}?')">Approve</a>
                 </td>
               </tr>

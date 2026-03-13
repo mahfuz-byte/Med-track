@@ -47,6 +47,12 @@ def approve_doctor(request, pk):
 
 
 @staff_member_required(login_url='/login/')
+def review_doctor(request, pk):
+    profile = get_object_or_404(DoctorProfile, pk=pk)
+    return render(request, 'admin_panel/review_doctor.html', {'profile': profile})
+
+
+@staff_member_required(login_url='/login/')
 def reject_doctor(request, pk):
     profile = get_object_or_404(DoctorProfile, pk=pk)
     profile.is_rejected = True
