@@ -448,6 +448,31 @@ a:hover { text-decoration: underline; }
 .badge-pending { background: #fef3c7; color: var(--warning); border: 1px solid #fcd34d; }
 .mt-2 { margin-top: 1rem; }
 
+/* ── Success alert ────────────────────────────────────────── */
+.alert-success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+}
+
+/* ── Form actions row ─────────────────────────────────────── */
+.form-actions { display: flex; gap: .75rem; margin-top: .5rem; }
+
+/* ── Current photo preview ────────────────────────────────── */
+.current-photo {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .5rem;
+}
+.current-photo img {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+.photo-hint { color: var(--muted); font-size: .82rem; }
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 600px) {
   .navbar { flex-direction: column; gap: .6rem; }
